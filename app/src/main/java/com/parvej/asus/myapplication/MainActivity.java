@@ -1,5 +1,6 @@
 package com.parvej.asus.myapplication;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     String RandomAudioFileName = "ABCDEFGHIJKLMNOP";
     public static final int RequestPermissionCode = 1;
     MediaPlayer mediaPlayer ;
-    private String SERVER_URL = "http://parvej.adsvads.com/";
+    private String SERVER_URL = "http://parvej.adsvads.com/upload.php";
     ProgressDialog dialog;
     TextView tvFileName;
 
@@ -58,6 +59,26 @@ public class MainActivity extends AppCompatActivity {
         buttonStopPlayingRecording.setEnabled(false);
 
         tvFileName = (TextView) findViewById(R.id.textView2);
+
+        ////// getting dynamic permissions
+        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE)!= PackageManager.PERMISSION_GRANTED)
+        {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.READ_PHONE_STATE))
+            {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.READ_PHONE_STATE},1);
+            }
+            else
+            {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.READ_PHONE_STATE},1);
+            }
+        }
+        else
+        {
+
+        }
+
+        //// end of dynamic permission
+
 
         random = new Random();
 
@@ -118,28 +139,30 @@ public class MainActivity extends AppCompatActivity {
                 buttonStop.setEnabled(false);
                 buttonStart.setEnabled(false);
                 buttonStopPlayingRecording.setEnabled(true);
+                Log.i("Testing", "function calling check: ");
+                uploadFile(AudioSavePathInDevice);
 
-                mediaPlayer = new MediaPlayer();
-                try {
-                    mediaPlayer.setDataSource(AudioSavePathInDevice);
-                    mediaPlayer.prepare();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                mediaPlayer.start();
-                Toast.makeText(MainActivity.this, "Recording Playing",
-                        Toast.LENGTH_LONG).show();
-
-                dialog = ProgressDialog.show(MainActivity.this,"","Uploading File...",true);
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //creating new thread to handle Http Operations
-                        uploadFile(AudioSavePathInDevice);
-                    }
-                }).start();
+//                mediaPlayer = new MediaPlayer();
+//                try {
+//                    mediaPlayer.setDataSource(AudioSavePathInDevice);
+//                    mediaPlayer.prepare();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                mediaPlayer.start();
+//                Toast.makeText(MainActivity.this, "Recording Playing",
+//                        Toast.LENGTH_LONG).show();
+//
+//                dialog = ProgressDialog.show(MainActivity.this,"","Uploading File...",true);
+//
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        //creating new thread to handle Http Operations
+//                        uploadFile(AudioSavePathInDevice);
+//                    }
+//                }).start();
 
             }
         });
